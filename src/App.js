@@ -51,7 +51,7 @@ const MainApp = () => {
     
     try {
       const canvas = await html2canvas(element, {
-        scale: 3,
+        scale: 2, // 2 is enough for high quality and much smaller file size
         useCORS: true,
         logging: false,
         allowTaint: true,
@@ -59,20 +59,31 @@ const MainApp = () => {
         onclone: (clonedDoc) => {
           const clonedElement = clonedDoc.getElementById('resume-template');
           if (clonedElement) {
+            // Force desktop layout for capture regardless of device
             clonedElement.style.transform = 'none';
             clonedElement.style.width = '210mm';
             clonedElement.style.minHeight = '297mm';
             clonedElement.style.margin = '0';
+            clonedElement.style.padding = '15mm 20mm'; // Standard A4 padding
+            clonedElement.style.boxSizing = 'border-box';
+            
+            // Remove any mobile scaling from parents
+            const parent = clonedElement.parentElement;
+            if (parent) {
+              parent.style.transform = 'none';
+              parent.style.width = 'auto';
+              parent.style.padding = '0';
+            }
           }
         }
       });
 
-      const imgData = canvas.toDataURL('image/png', 1.0);
-      const pdf = new jsPDF('p', 'mm', 'a4');
+      const imgData = canvas.toDataURL('image/jpeg', 0.95); // Using JPEG with high quality to reduce file size significantly
+      const pdf = new jsPDF('p', 'mm', 'a4', true); // Enable compression
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
       
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
 
       // Preserve links
       const links = element.querySelectorAll('a');
@@ -308,9 +319,6 @@ const MainApp = () => {
             >
               <div className="menu-header">
                 <h1 className="logo-text">Resume<span>Builder</span></h1>
-                <button className="menu-close-btn" onClick={() => setIsMenuOpen(false)}>
-                  <X size={24} />
-                </button>
               </div>
               
               <div className="menu-links">
@@ -349,22 +357,22 @@ const MainApp = () => {
                   <ChevronRight size={18} className="chevron" />
                 </button>
 
-                <div className="menu-divider"></div>
-
                 <button 
-                  className="menu-link sample"
+                  className="menu-link"
                   onClick={() => { loadSampleData(selectedTemplate); setIsMenuOpen(false); }}
                 >
                   <div className="link-icon"><Eye size={20} /></div>
                   <span>View Sample Data</span>
+                  <ChevronRight size={18} className="chevron" />
                 </button>
                 
                 <button 
-                  className="menu-link download"
+                  className="menu-link download-mobile"
                   onClick={() => { handleDownload(); setIsMenuOpen(false); }}
                 >
                   <div className="link-icon"><Download size={20} /></div>
                   <span>Download PDF</span>
+                  <ChevronRight size={18} className="chevron" />
                 </button>
               </div>
             </motion.div>

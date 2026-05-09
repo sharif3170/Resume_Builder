@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import './App.css';
-import { ResumeProvider, useResume, jakeRyanData, harishbarData, autoCVData, jaydevVarmaData, twoColumnData } from './context/ResumeContext';
+import { ResumeProvider, useResume, jakeRyanData, harishbarData, autoCVData, jaydevVarmaData, twoColumnData, namanCVData, rezumeData } from './context/ResumeContext';
 import Editor from './components/Editor';
 import JakeRyanTemplate from './templates/JakeRyan';
 import HarishbarTemplate from './templates/Harishbar';
@@ -8,6 +8,7 @@ import AutoCVTemplate from './templates/AutoCV';
 import JaydevVarmaTemplate from './templates/JaydevVarma';
 import TwoColumnTemplate from './templates/TwoColumn';
 import RezumeTemplate from './templates/Rezume';
+import NamanCVTemplate from './templates/NamanCV';
 import { Download, Layout, Edit3, Eye, X, Menu, ChevronRight, ChevronLeft } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -27,6 +28,7 @@ const PreviewModal = ({ isOpen, onClose, template, data }) => {
             {template === 'JaydevVarma' && <JaydevVarmaTemplate data={data} />}
             {template === 'TwoColumn' && <TwoColumnTemplate data={data} />}
             {template === 'Rezume' && <RezumeTemplate data={data} />}
+            {template === 'NamanCV' && <NamanCVTemplate data={data} />}
           </div>
         </div>
       </div>
@@ -41,16 +43,18 @@ const MainApp = () => {
   const [previewTab, setPreviewTab] = useState('preview'); // 'preview' or 'structure'
   const [mobileTab, setMobileTab] = useState('edit'); // 'edit', 'preview', 'structure'
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const resumeRef = useRef();
 
   const handleDownload = async () => {
-    const element = document.getElementById('resume-template');
+    const element = document.getElementById('resume-pdf-source');
     if (!element) {
-      alert('Please open the preview tab before downloading.');
+      alert('Application error: PDF source not found.');
       return;
     }
 
     try {
+      setIsDownloading(true);
       const canvas = await html2canvas(element, {
         scale: 6,
         useCORS: true,
@@ -58,15 +62,17 @@ const MainApp = () => {
         allowTaint: true,
         backgroundColor: '#ffffff',
         onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.getElementById('resume-template');
+          const clonedElement = clonedDoc.getElementById('resume-pdf-source')?.firstElementChild;
           if (clonedElement) {
             clonedElement.style.transform = 'none';
-            clonedElement.style.width = '8.5in';
-            clonedElement.style.minHeight = '11in';
+            clonedElement.style.width = '210mm';
+            clonedElement.style.minHeight = '297mm';
             clonedElement.style.margin = '0';
-            clonedElement.style.padding = '0.5';
+            clonedElement.style.padding = '0';
             clonedElement.style.boxSizing = 'border-box';
             clonedElement.style.backgroundColor = 'white';
+            clonedElement.style.display = 'block';
+            clonedElement.style.visibility = 'visible';
 
             const parent = clonedElement.parentElement;
             if (parent) {
@@ -99,7 +105,10 @@ const MainApp = () => {
       });
 
       pdf.save(`${resumeData.personalInfo.fullName.replace(/\s+/g, '_')}_Resume.pdf`);
+      setIsDownloading(false);
+      alert('Resume downloaded successfully!');
     } catch (error) {
+      setIsDownloading(false);
       console.error('PDF Generation failed:', error);
       alert('Failed to generate PDF. Please try again.');
     }
@@ -108,6 +117,21 @@ const MainApp = () => {
   if (view === 'selector') {
     return (
       <div className="selector-screen">
+        <AnimatePresence>
+          {isDownloading && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="download-overlay"
+            >
+              <div className="download-spinner-wrap">
+                <div className="spinner"></div>
+                <p>Generating PDF...</p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <header className="selector-header">
           <h1 className="logo-text">Resume<span>Builder</span></h1>
           <p>Select a professional template to get started</p>
@@ -295,7 +319,7 @@ const MainApp = () => {
           >
             <div className="template-preview-thumb">
               <div className="mini-template-view">
-                <RezumeTemplate data={jakeRyanData} />
+                <RezumeTemplate data={rezumeData} />
               </div>
               <div className="card-actions">
                 <button
@@ -316,6 +340,41 @@ const MainApp = () => {
               <p>Professional Overleaf-Style Design</p>
             </div>
           </motion.div>
+
+          {/* Template 7: Naman CV */}
+          <motion.div
+            whileHover={{ y: -10 }}
+            className={`template-card ${selectedTemplate === 'NamanCV' ? 'selected' : ''}`}
+            onClick={() => {
+              setSelectedTemplate('NamanCV');
+              loadSampleData('NamanCV');
+              setView('editor');
+            }}
+          >
+            <div className="template-preview-thumb">
+              <div className="mini-template-view">
+                {namanCVData && <NamanCVTemplate data={namanCVData} />}
+              </div>
+              <div className="card-actions">
+                <button
+                  className="card-action-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsPreviewOpen(true);
+                    setSelectedTemplate('NamanCV');
+                    loadSampleData('NamanCV');
+                  }}
+                  title="Quick View"
+                >
+                  <Eye size={18} />
+                </button>
+              </div>
+            </div>
+            <div className="template-info">
+              <h3>Resume Template 7</h3>
+              <p>Academic & Research Layout</p>
+            </div>
+          </motion.div>
         </div>
 
         <PreviewModal
@@ -330,6 +389,21 @@ const MainApp = () => {
 
   return (
     <div className="editor-screen">
+      <AnimatePresence>
+        {isDownloading && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="download-overlay"
+          >
+            <div className="download-spinner-wrap">
+              <div className="spinner"></div>
+              <p>Generating PDF...</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMenuOpen && (
@@ -418,7 +492,8 @@ const MainApp = () => {
               selectedTemplate === 'Harishbar' ? 'Resume Template 2' :
                 selectedTemplate === 'AutoCV' ? 'Resume Template 3' :
                   selectedTemplate === 'JaydevVarma' ? 'Resume Template 4' : 
-                    selectedTemplate === 'TwoColumn' ? 'Resume Template 5' : 'Resume Template 6'}
+                    selectedTemplate === 'TwoColumn' ? 'Resume Template 5' : 
+                      selectedTemplate === 'Rezume' ? 'Resume Template 6' : 'Resume Template 7'}
           </span>
           <span className="mobile-view-title mobile-only">
             {mobileTab === 'edit' ? 'Edit Resume' :
@@ -471,6 +546,7 @@ const MainApp = () => {
                 {selectedTemplate === 'JaydevVarma' && <JaydevVarmaTemplate data={resumeData} />}
                 {selectedTemplate === 'TwoColumn' && <TwoColumnTemplate data={resumeData} />}
                 {selectedTemplate === 'Rezume' && <RezumeTemplate data={resumeData} />}
+                {selectedTemplate === 'NamanCV' && <NamanCVTemplate data={resumeData} />}
               </div>
             ) : (
               <div className="structure-editor">
@@ -522,18 +598,27 @@ const MainApp = () => {
                         <label>Section</label>
                         <input
                           type="text"
-                          value={resumeData.sectionTitles?.experience || ''}
-                          placeholder="EXPERIENCE"
-                          onChange={(e) => updateSectionTitles({ experience: e.target.value })}
+                          value={resumeData.sectionTitles?.summary || ''}
+                          placeholder="CAREER OBJECTIVE"
+                          onChange={(e) => updateSectionTitles({ summary: e.target.value })}
                         />
                       </div>
                       <div className="input-group">
                         <label>Section</label>
                         <input
                           type="text"
-                          value={resumeData.sectionTitles?.projects || ''}
-                          placeholder="PROJECTS"
-                          onChange={(e) => updateSectionTitles({ projects: e.target.value })}
+                          value={resumeData.sectionTitles?.skills || ''}
+                          placeholder="SKILLS"
+                          onChange={(e) => updateSectionTitles({ skills: e.target.value })}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Section</label>
+                        <input
+                          type="text"
+                          value={resumeData.sectionTitles?.experience || ''}
+                          placeholder="EXPERIENCE"
+                          onChange={(e) => updateSectionTitles({ experience: e.target.value })}
                         />
                       </div>
                       <div className="input-group">
@@ -549,9 +634,18 @@ const MainApp = () => {
                         <label>Section</label>
                         <input
                           type="text"
-                          value={resumeData.sectionTitles?.skills || ''}
-                          placeholder="SKILLS"
-                          onChange={(e) => updateSectionTitles({ skills: e.target.value })}
+                          value={resumeData.sectionTitles?.projects || ''}
+                          placeholder="PROJECTS"
+                          onChange={(e) => updateSectionTitles({ projects: e.target.value })}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Section</label>
+                        <input
+                          type="text"
+                          value={resumeData.sectionTitles?.certifications || ''}
+                          placeholder="CERTIFICATIONS"
+                          onChange={(e) => updateSectionTitles({ certifications: e.target.value })}
                         />
                       </div>
                     </>
@@ -783,6 +877,63 @@ const MainApp = () => {
                         />
                       </div>
                     </>
+                  ) : selectedTemplate === 'NamanCV' ? (
+                    <>
+                      <div className="input-group">
+                        <label>Section</label>
+                        <input
+                          type="text"
+                          value={resumeData.sectionTitles?.summary || ''}
+                          placeholder="CAREER OBJECTIVE"
+                          onChange={(e) => updateSectionTitles({ summary: e.target.value })}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Section</label>
+                        <input
+                          type="text"
+                          value={resumeData.sectionTitles?.education || ''}
+                          placeholder="EDUCATION"
+                          onChange={(e) => updateSectionTitles({ education: e.target.value })}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Section</label>
+                        <input
+                          type="text"
+                          value={resumeData.sectionTitles?.skills || ''}
+                          placeholder="SKILLS"
+                          onChange={(e) => updateSectionTitles({ skills: e.target.value })}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Section</label>
+                        <input
+                          type="text"
+                          value={resumeData.sectionTitles?.experience || ''}
+                          placeholder="WORK EXPERIENCE"
+                          onChange={(e) => updateSectionTitles({ experience: e.target.value })}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Section</label>
+                        <input
+                          type="text"
+                          value={resumeData.sectionTitles?.projects || ''}
+                          placeholder="PROJECTS"
+                          onChange={(e) => updateSectionTitles({ projects: e.target.value })}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Section</label>
+                        <input
+                          type="text"
+                          value={resumeData.sectionTitles?.certifications || ''}
+                          placeholder="CERTIFICATIONS"
+                          onChange={(e) => updateSectionTitles({ certifications: e.target.value })}
+                        />
+                      </div>
+                    </>
                   ) : (
                     <>
                       <div className="input-group">
@@ -829,6 +980,19 @@ const MainApp = () => {
           </div>
         </div>
       </main>
+      
+      {/* Hidden container for PDF generation - always in DOM */}
+      <div id="pdf-gen-container" style={{ position: 'absolute', left: '-9999px', top: '0', zIndex: -1 }}>
+        <div id="resume-pdf-source">
+          {selectedTemplate === 'JakeRyan' && <JakeRyanTemplate data={resumeData} />}
+          {selectedTemplate === 'Harishbar' && <HarishbarTemplate data={resumeData} />}
+          {selectedTemplate === 'AutoCV' && <AutoCVTemplate data={resumeData} />}
+          {selectedTemplate === 'JaydevVarma' && <JaydevVarmaTemplate data={resumeData} />}
+          {selectedTemplate === 'TwoColumn' && <TwoColumnTemplate data={resumeData} />}
+          {selectedTemplate === 'Rezume' && <RezumeTemplate data={resumeData} />}
+          {selectedTemplate === 'NamanCV' && <NamanCVTemplate data={resumeData} />}
+        </div>
+      </div>
     </div>
   );
 };

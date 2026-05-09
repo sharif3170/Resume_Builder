@@ -2,10 +2,116 @@ import React, { createContext, useContext, useState } from 'react';
 
 const ResumeContext = createContext();
 
+const namanCVData = {
+  personalInfo: {
+    fullName: 'Your Name',
+    email: 'yourmail@example.com',
+    phone: '+00.00.000.000',
+    location: '',
+    linkedin: 'linkedin.com',
+    github: 'github.com',
+    leetcode: 'leetcode.com',
+    website: '',
+    role: ''
+  },
+  summary: 'Dedicated Software Developer with a strong foundation in full-stack development, cloud infrastructure, and agile methodologies. Experienced in architecting scalable applications using React, Node.js, and Python, with a focus on performance optimization and clean code. Committed to continuous learning and delivering innovative solutions that drive business value.',
+  education: [
+    {
+      school: 'Stanford University',
+      location: 'Stanford, CA',
+      degree: 'Master of Science in Computer Science',
+      date: '2021 - 2023',
+      bullets: ['(CGPA: 9.2/10.0)']
+    },
+    {
+      school: 'UC Berkeley',
+      location: 'Berkeley, CA',
+      degree: 'Bachelor of Science in Computer Science',
+      date: '2017 - 2021',
+      bullets: ['(CGPA: 8.8/10.0)']
+    },
+    {
+      school: 'Delhi Public School',
+      location: 'New Delhi, India',
+      degree: 'Intermediate (Class 12th)',
+      date: '2015 - 2017',
+      bullets: ['(95%)']
+    },
+    {
+      school: 'St. Xavier\'s High School',
+      location: 'Mumbai, India',
+      degree: 'SSC (Class 10th)',
+      date: '2015',
+      bullets: ['(92%)']
+    }
+  ],
+  experience: [
+    {
+      company: 'Senior Software Engineer',
+      location: 'San Francisco, CA',
+      role: 'Tech Solutions Inc.',
+      date: 'Jan 2021 - present',
+      bullets: [
+        'Led the development of a high-performance microservices architecture using Node.js and Docker, improving system scalability by 40% and reducing latency by 150ms.',
+        'Architected and implemented a real-time data streaming pipeline using Apache Kafka and Python, processing over 10M events daily with 99.9% uptime.'
+      ]
+    },
+    {
+      company: 'Full Stack Developer',
+      location: 'Austin, TX',
+      role: 'Digital Innovations Ltd.',
+      date: 'Mar 2019 - Jan 2021',
+      bullets: [
+        'Developed and maintained responsive web applications using React and Redux, resulting in a 25% increase in user engagement across platforms.',
+        'Optimized SQL queries and database schemas in PostgreSQL, reducing data retrieval times by 30% for high-traffic analytical dashboards.'
+      ]
+    }
+  ],
+  projects: [
+    {
+      title: 'Cloud-Native E-Commerce Platform',
+      tech: 'React, Node.js, AWS, Terraform',
+      date: 'https://github.com/username/ecommerce-cloud',
+      bullets: [
+        'Engineered a scalable e-commerce solution with a serverless backend using AWS Lambda and API Gateway, supporting 10k+ concurrent users.',
+        'Automated infrastructure provisioning with Terraform, reducing environment setup time by 70%.'
+      ]
+    },
+    {
+      title: 'AI-Powered Task Manager',
+      tech: 'TypeScript, Next.js, OpenAI API, PostgreSQL',
+      date: 'https://taskmaster-ai.demo',
+      bullets: [
+        'Developed an intelligent task management application that utilizes OpenAI\'s GPT-4 to automatically categorize and prioritize user tasks based on natural language input.',
+        'Built a responsive frontend with Next.js and Tailwind CSS, achieving sub-second page loads through server-side rendering (SSR).'
+      ]
+    }
+  ],
+  skills: [
+    { title: 'Languages', details: 'JavaScript (ES6+), TypeScript, Python, Java, C++, SQL' },
+    { title: 'Frameworks/Libraries', details: 'React, Node.js, Next.js, Express, Redux, Tailwind CSS' },
+    { title: 'Cloud/DevOps', details: 'AWS (Lambda, S3, EC2), Docker, Kubernetes, Terraform, GitHub Actions' },
+    { title: 'Tools/Databases', details: 'PostgreSQL, MongoDB, Redis, Git, Postman, VS Code' }
+  ],
+  certifications: [
+    { title: 'AWS Certified Solutions Architect – Associate' },
+    { title: 'Google Professional Cloud Developer' },
+    { title: 'Meta Front-End Developer Professional Certificate' }
+  ],
+  sectionTitles: {
+    summary: 'CAREER OBJECTIVE',
+    education: 'EDUCATION',
+    experience: 'WORK EXPERIENCE',
+    projects: 'PROJECTS',
+    skills: 'SKILLS',
+    certifications: 'CERTIFICATIONS'
+  }
+};
+
 export const jakeRyanData = {
   personalInfo: {
     fullName: 'Your Name',
-    email: 'yourmail@gmail.com',
+    email: 'yourmail@example.com',
     phone: '123-456-7890',
     location: 'Georgetown, TX',
     linkedin: 'linkedin.com',
@@ -203,12 +309,14 @@ export const harishbarData = {
     { title: 'Developer Tools', details: 'Git, Docker, TravisCI, Google Cloud Platform, VS Code' }
   ],
   sectionTitles: {
+    summary: 'CAREER OBJECTIVE',
     experience: 'EXPERIENCE',
     projects: 'PROJECTS',
     education: 'EDUCATION',
-    skills: 'SKILLS'
+    skills: 'SKILLS',
+    certifications: 'CERTIFICATIONS'
   },
-  summary: ''
+  summary: 'Dedicated Software Developer with a strong focus on creating clean, efficient, and user-centric applications. Experienced in React and modern web technologies, with a passion for continuous learning and professional growth.'
 };
 
 export const autoCVData = {
@@ -217,8 +325,8 @@ export const autoCVData = {
     email: 'yourmail@example.com',
     phone: '123-456-7890',
     location: 'Boston, MA',
-    linkedin: 'linkedin.com/in/username',
-    github: 'github.com/username',
+    linkedin: 'linkedin.com',
+    github: 'github.com',
     leetcode: 'leetcode.com',
     role: 'SENIOR SOFTWARE ENGINEER'
   },
@@ -665,6 +773,9 @@ export const ResumeProvider = ({ children }) => {
       case 'Rezume':
         setResumeData(rezumeData);
         break;
+      case 'NamanCV':
+        setResumeData(namanCVData);
+        break;
       default:
         setResumeData(jakeRyanData);
     }
@@ -737,3 +848,5 @@ export const useResume = () => {
   }
   return context;
 };
+
+export { namanCVData };

@@ -23,7 +23,7 @@ const LeetCodeIcon = ({ size = 14 }) => (
 );
 
 const HarishbarTemplate = ({ data }) => {
-  const { personalInfo, education, experience, projects, skills, sectionTitles } = data;
+  const { personalInfo, education, experience, projects, skills, summary, certifications, sectionTitles } = data;
 
   return (
     <div id="resume-template" className="harishbar-container v2">
@@ -73,6 +73,29 @@ const HarishbarTemplate = ({ data }) => {
         </div>
       </header>
 
+      {/* Summary */}
+      {summary && (
+        <section className="section">
+          <h2 className="section-title">{sectionTitles?.summary?.toUpperCase() || 'CAREER OBJECTIVE'}</h2>
+          <div className="section-divider"></div>
+          <p className="summary-text">{summary}</p>
+        </section>
+      )}
+
+      {/* Skills */}
+      <section className="section">
+        <h2 className="section-title">{sectionTitles?.skills?.toUpperCase() || 'SKILLS'}</h2>
+        <div className="section-divider"></div>
+        <div className="skills-grid">
+          {skills.map((skill, index) => (
+            <div key={index} className="skill-row">
+              <span className="bold">{skill.title} : </span>
+              <span>{skill.details}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Experience */}
       <section className="section">
         <h2 className="section-title">{sectionTitles?.experience?.toUpperCase() || 'EXPERIENCE'}</h2>
@@ -89,25 +112,6 @@ const HarishbarTemplate = ({ data }) => {
             </div>
             <ul className="bullets">
               {exp.bullets.map((bullet, i) => (
-                <li key={i}>{bullet}</li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </section>
-
-      {/* Projects */}
-      <section className="section">
-        <h2 className="section-title">{sectionTitles?.projects?.toUpperCase() || 'PROJECTS'}</h2>
-        <div className="section-divider"></div>
-        {projects.map((proj, index) => (
-          <div key={index} className="item">
-            <div className="item-row main">
-              <span className="bold">{proj.title}</span>
-              <span className="date-loc">{proj.date}</span>
-            </div>
-            <ul className="bullets">
-              {proj.bullets.map((bullet, i) => (
                 <li key={i}>{bullet}</li>
               ))}
             </ul>
@@ -140,19 +144,39 @@ const HarishbarTemplate = ({ data }) => {
         ))}
       </section>
 
-      {/* Skills */}
+      {/* Projects */}
       <section className="section">
-        <h2 className="section-title">{sectionTitles?.skills?.toUpperCase() || 'SKILLS'}</h2>
+        <h2 className="section-title">{sectionTitles?.projects?.toUpperCase() || 'PROJECTS'}</h2>
         <div className="section-divider"></div>
-        <div className="skills-grid">
-          {skills.map((skill, index) => (
-            <div key={index} className="skill-row">
-              <span className="bold">{skill.title} : </span>
-              <span>{skill.details}</span>
+        {projects.map((proj, index) => (
+          <div key={index} className="item">
+            <div className="item-row main">
+              <span className="bold">{proj.title}</span>
+              <span className="date-loc">{proj.date}</span>
             </div>
-          ))}
-        </div>
+            <ul className="bullets">
+              {proj.bullets.map((bullet, i) => (
+                <li key={i}>{bullet}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </section>
+
+      {/* Certifications */}
+      {certifications && certifications.length > 0 && (
+        <section className="section">
+          <h2 className="section-title">{sectionTitles?.certifications?.toUpperCase() || 'CERTIFICATIONS'}</h2>
+          <div className="section-divider"></div>
+          <ul className="bullets">
+            {certifications.map((cert, index) => (
+              <li key={index}>
+                {cert.title}{cert.date ? ` (${cert.date})` : ''}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <style jsx>{`
         .harishbar-container {
@@ -187,6 +211,13 @@ const HarishbarTemplate = ({ data }) => {
           gap: 12px;
           font-size: 10pt;
           color: #444;
+        }
+
+        .summary-text {
+          font-size: 10pt;
+          color: #222;
+          margin: 0;
+          text-align: justify;
         }
 
         .harishbar-header .contact-item {

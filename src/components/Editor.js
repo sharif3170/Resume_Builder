@@ -82,7 +82,16 @@ const Editor = ({ mobileTab, setMobileTab }) => {
             type="text" 
             value={resumeData.personalInfo.linkedin} 
             onChange={(e) => updatePersonalInfo({ linkedin: e.target.value })}
-            placeholder="linkedin.com/in/username"
+            placeholder="linkedin.com"
+          />
+        </div>
+        <div className="input-group">
+          <label>Leetcode</label>
+          <input 
+            type="text" 
+            value={resumeData.personalInfo.leetcode || ''} 
+            onChange={(e) => updatePersonalInfo({ leetcode: e.target.value })}
+            placeholder="leetcode.com"
           />
         </div>
         <div className="input-group">
@@ -91,16 +100,7 @@ const Editor = ({ mobileTab, setMobileTab }) => {
             type="text" 
             value={resumeData.personalInfo.github} 
             onChange={(e) => updatePersonalInfo({ github: e.target.value })}
-            placeholder="github.com/username"
-          />
-        </div>
-        <div className="input-group">
-          <label>LeetCode</label>
-          <input 
-            type="text" 
-            value={resumeData.personalInfo.leetcode || ''} 
-            onChange={(e) => updatePersonalInfo({ leetcode: e.target.value })}
-            placeholder="leetcode.com/username"
+            placeholder="github.com"
           />
         </div>
       </div>
@@ -584,6 +584,16 @@ const Editor = ({ mobileTab, setMobileTab }) => {
         projectsSection,
         skillsSection
       ];
+    } else if (selectedTemplate === 'NamanCV') {
+      return [
+        personalSection,
+        summarySection,
+        educationSection,
+        skillsSection,
+        experienceSection,
+        projectsSection,
+        certificationsSection
+      ];
     } else if (selectedTemplate === 'JaydevVarma') {
       return [
         personalSection,
@@ -612,6 +622,16 @@ const Editor = ({ mobileTab, setMobileTab }) => {
         communicationSection,
         achievementsSection,
         skillsSection,
+        certificationsSection
+      ];
+    } else if (selectedTemplate === 'Harishbar' || selectedTemplate === 'Rezume') {
+      return [
+        personalSection,
+        summarySection,
+        skillsSection,
+        experienceSection,
+        educationSection,
+        projectsSection,
         certificationsSection
       ];
     } else {

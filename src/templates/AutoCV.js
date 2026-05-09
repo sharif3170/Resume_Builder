@@ -174,7 +174,7 @@ const AutoCVTemplate = ({ data }) => {
         .autocv-container {
           width: 210mm;
           min-height: 297mm;
-          padding: 20mm;
+          padding: 12mm 15mm;
           background: white;
           color: #333;
           font-family: 'Crimson Text', serif;

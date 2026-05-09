@@ -129,9 +129,8 @@ const JakeRyanTemplate = ({ data }) => {
       <style jsx>{`
         .resume-container {
           width: 210mm;
-          height: auto;
           min-height: 297mm;
-          padding: 15mm 15mm 25mm;
+          padding: 12mm 15mm;
           background: white;
           color: black;
           font-family: 'Inter', -apple-system, sans-serif;

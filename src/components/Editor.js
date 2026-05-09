@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useResume } from '../context/ResumeContext';
 import { User, GraduationCap, Briefcase, Code, Plus, Trash2, ChevronDown, ChevronUp, Layout, AlignLeft, Award, MessageSquare, FileBadge } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -43,7 +43,7 @@ const Editor = ({ mobileTab, setMobileTab }) => {
     setResumeData,
     selectedTemplate 
   } = useResume();
-  const [activeSection, setActiveSection] = React.useState('personal');
+  const [activeSection, setActiveSection] = useState('personal');
 
   const sectionProps = { activeSection, setActiveSection };
 
@@ -57,16 +57,7 @@ const Editor = ({ mobileTab, setMobileTab }) => {
           onChange={(e) => updatePersonalInfo({ fullName: e.target.value })}
         />
       </div>
-      <div className="input-group">
-        <label>Job Title / Role</label>
-        <input 
-          type="text" 
-          value={resumeData.personalInfo.role || ''} 
-          onChange={(e) => updatePersonalInfo({ role: e.target.value })}
-          placeholder="e.g. SOFTWARE ENGINEER"
-        />
-      </div>
-      <div className="input-grid">
+            <div className="input-grid">
         <div className="input-group">
           <label>Email</label>
           <input 
@@ -184,20 +175,7 @@ const Editor = ({ mobileTab, setMobileTab }) => {
               />
             </div>
           </div>
-          {selectedTemplate !== 'JakeRyan' && selectedTemplate !== 'TwoColumn' && (
-            <div className="input-group">
-              <label>Bullets (one per line)</label>
-              <textarea 
-                value={edu.bullets?.join('\n') || ''} 
-                onChange={(e) => {
-                  const newEdu = [...resumeData.education];
-                  newEdu[index].bullets = e.target.value.split('\n');
-                  updateEducation(newEdu);
-                }}
-              />
-            </div>
-          )}
-          <button 
+                    <button 
             className="delete-btn"
             onClick={() => updateEducation(resumeData.education.filter((_, i) => i !== index))}
           >
@@ -562,20 +540,7 @@ const Editor = ({ mobileTab, setMobileTab }) => {
     <Section key="certifications" id="certifications" title="Certifications" icon={FileBadge} {...sectionProps}>
       {(resumeData.certifications || []).map((cert, index) => (
         <div key={index} className="item-editor">
-          <div className="input-grid">
-            <div className="input-group" style={{ flex: '0 0 100px' }}>
-              <label>Year</label>
-              <input 
-                type="text" 
-                value={cert.date} 
-                onChange={(e) => {
-                  const newCerts = [...resumeData.certifications];
-                  newCerts[index].date = e.target.value;
-                  setResumeData({ ...resumeData, certifications: newCerts });
-                }}
-              />
-            </div>
-            <div className="input-group">
+          <div className="input-group">
               <label>Certification Name</label>
               <input 
                 type="text" 
@@ -587,7 +552,6 @@ const Editor = ({ mobileTab, setMobileTab }) => {
                 }}
               />
             </div>
-          </div>
           <button 
             className="delete-btn"
             onClick={() => {
@@ -602,7 +566,7 @@ const Editor = ({ mobileTab, setMobileTab }) => {
       <button 
         className="add-btn"
         onClick={() => {
-          const newCerts = [...(resumeData.certifications || []), { date: '', title: '' }];
+          const newCerts = [...(resumeData.certifications || []), { title: '' }];
           setResumeData({ ...resumeData, certifications: newCerts });
         }}
       >
@@ -653,10 +617,12 @@ const Editor = ({ mobileTab, setMobileTab }) => {
     } else {
       return [
         personalSection,
+        summarySection,
+        skillsSection,
         experienceSection,
         educationSection,
         projectsSection,
-        skillsSection
+        certificationsSection
       ];
     }
   };

@@ -543,6 +543,103 @@ export const twoColumnData = {
   }
 };
 
+export const rezumeData = {
+  personalInfo: {
+    fullName: 'YOUR NAME',
+    email: 'yourmail@example.com',
+    phone: '123-456-7890',
+    location: 'Anycity, Anystate, Anycountry',
+    linkedin: 'linkedin.com',
+    github: 'github.com',
+    leetcode: 'leetcode.com',
+    website: '',
+    role: 'YOUR ROLE'
+  },
+  summary: 'I am a highly skilled web developer with over 3 years of experience in HTML, CSS, JavaScript, and PHP. I have knowledge of popular frameworks such as React, Angular, and Vue.js and experience with REST APIs and MVC frameworks.',
+  education: [
+    {
+      school: 'University of Anystate',
+      location: 'Anycity, Anystate, Anycountry',
+      degree: 'Bachelor of Science in Computer Science',
+      date: 'Jan 2016 -- Dec 2020'
+    }
+  ],
+  experience: [
+    {
+      company: 'Anycompany',
+      location: 'Remote -- Anycity, Anystate, Anycountry',
+      role: 'Web Developer',
+      date: 'Apr 2022 -- Present',
+      bullets: [
+        'Designed and developed dynamic and responsive websites using HTML, CSS, JavaScript, and PHP',
+        'Worked with REST APIs to retrieve and display data from databases',
+        'Improved website performance and speed through optimization techniques by 55%'
+      ]
+    },
+    {
+      company: 'Anycompany',
+      location: 'Anycity, Anystate, Anycountry',
+      role: 'Backend Developer',
+      date: 'Aug 2021 -- Nov 2022',
+      bullets: [
+        'Worked with MVC frameworks to develop robust and scalable backends',
+        'Troubleshot and fixed bugs and issues in the backend to ensure smooth operation of the applications'
+      ]
+    },
+    {
+      company: 'Anycompany',
+      location: 'Anycity, Anystate, Anycountry',
+      role: 'Backend Developer Intern',
+      date: 'Jan 2021 -- Aug 2021',
+      bullets: [
+        'Assisted senior web developers in the design and development of websites using HTML, CSS, and JavaScript'
+      ]
+    }
+  ],
+  projects: [
+    {
+      title: 'Project 1',
+      tech: 'React.js, Redux, PHP, MySQL, Git',
+      date: '',
+      bullets: [
+        'Designed and developed a clean and modern website using HTML, CSS, and JavaScript',
+        'Optimized website for speed and user experience',
+        'Utilized responsive design to ensure compatibility across all devices',
+        'Deployed on GitHub pages via GitHub Actions'
+      ]
+    },
+    {
+      title: 'Project 2',
+      tech: 'Node.js, Express, JavaScript, Git',
+      date: '',
+      bullets: [
+        'A CRUD application exposed using a RESTful API made with Node.js',
+        'Exposed POST, GET, PATCH and DELETE HTTP methods using Express'
+      ]
+    }
+  ],
+  skills: [
+    { title: 'Languages', details: 'JavaScript, PHP, Java, HTML, CSS' },
+    { title: 'Frameworks', details: 'React.js, Angular, Express, Node.js' },
+    { title: 'Libraries', details: 'Material, Redux, React Router' },
+    { title: 'Databases', details: 'MongoDB, PostgreSQL' },
+    { title: 'Dev Tools', details: 'Visual Studio Code, Git, GitLab' }
+  ],
+  certifications: [
+    { title: 'Certified Web Developer by the W3C', date: '' },
+    { title: 'Microsoft Certified: Azure Developer Associate', date: '' },
+    { title: 'AWS Certified Developer -- Associate', date: '' }
+  ],
+  sectionTitles: {
+    experience: 'EXPERIENCE',
+    projects: 'PROJECTS',
+    education: 'EDUCATION',
+    skills: 'TECHNICAL SKILLS',
+    certifications: 'CERTIFICATIONS',
+    summary: 'CAREER OBJECTIVE'
+  }
+};
+
 export const ResumeProvider = ({ children }) => {
   const [resumeData, setResumeData] = useState(jakeRyanData);
   const [selectedTemplate, setSelectedTemplate] = useState('JakeRyan');
@@ -564,6 +661,9 @@ export const ResumeProvider = ({ children }) => {
         break;
       case 'TwoColumn':
         setResumeData(twoColumnData);
+        break;
+      case 'Rezume':
+        setResumeData(rezumeData);
         break;
       default:
         setResumeData(jakeRyanData);

@@ -216,8 +216,8 @@ const TwoColumnTemplate = ({ data }) => {
 
         .content-grid {
           display: grid;
-          grid-template-columns: 60% 40%;
-          gap: 30px;
+          grid-template-columns: 1.6fr 1fr;
+          gap: 35px;
           margin-top: 15px;
         }
 

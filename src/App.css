@@ -367,7 +367,19 @@
   gap: 8px;
 }
 
-.download-btn:hover {
+.mobile-download-btn {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.download-btn:hover,
+.mobile-download-btn:hover {
   background: var(--primary-hover);
   transform: translateY(-1px);
 }

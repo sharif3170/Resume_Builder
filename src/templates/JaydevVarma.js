@@ -208,7 +208,7 @@ const JaydevVarmaTemplate = ({ data }) => {
         .jaydev-container {
           width: 210mm;
           min-height: 297mm;
-          padding: 15mm;
+          padding: 12mm 15mm;
           background: white;
           color: #2E2E2E;
           font-family: 'Lato', sans-serif;

@@ -7,6 +7,7 @@ import HarishbarTemplate from './templates/Harishbar';
 import AutoCVTemplate from './templates/AutoCV';
 import JaydevVarmaTemplate from './templates/JaydevVarma';
 import TwoColumnTemplate from './templates/TwoColumn';
+import RezumeTemplate from './templates/Rezume';
 import { Download, Layout, Edit3, Eye, X, Menu, ChevronRight, ChevronLeft } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -25,6 +26,7 @@ const PreviewModal = ({ isOpen, onClose, template, data }) => {
             {template === 'AutoCV' && <AutoCVTemplate data={data} />}
             {template === 'JaydevVarma' && <JaydevVarmaTemplate data={data} />}
             {template === 'TwoColumn' && <TwoColumnTemplate data={data} />}
+            {template === 'Rezume' && <RezumeTemplate data={data} />}
           </div>
         </div>
       </div>
@@ -48,10 +50,9 @@ const MainApp = () => {
       return;
     }
 
-    
     try {
       const canvas = await html2canvas(element, {
-        scale: 2, // 2 is enough for high quality and much smaller file size
+        scale: 6,
         useCORS: true,
         logging: false,
         allowTaint: true,
@@ -59,36 +60,35 @@ const MainApp = () => {
         onclone: (clonedDoc) => {
           const clonedElement = clonedDoc.getElementById('resume-template');
           if (clonedElement) {
-            // Force desktop layout for capture regardless of device
             clonedElement.style.transform = 'none';
-            clonedElement.style.width = '210mm';
-            clonedElement.style.minHeight = '297mm';
+            clonedElement.style.width = '8.5in';
+            clonedElement.style.minHeight = '11in';
             clonedElement.style.margin = '0';
-            clonedElement.style.padding = '15mm 20mm'; // Standard A4 padding
+            clonedElement.style.padding = '0.5';
             clonedElement.style.boxSizing = 'border-box';
-            
-            // Remove any mobile scaling from parents
+            clonedElement.style.backgroundColor = 'white';
+
             const parent = clonedElement.parentElement;
             if (parent) {
               parent.style.transform = 'none';
               parent.style.width = 'auto';
               parent.style.padding = '0';
+              parent.style.background = 'white';
             }
           }
         }
       });
 
-      const imgData = canvas.toDataURL('image/jpeg', 0.95); // Using JPEG with high quality to reduce file size significantly
-      const pdf = new jsPDF('p', 'mm', 'a4', true); // Enable compression
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'letter', true);
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
-      
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
 
-      // Preserve links
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight, undefined, 'FAST');
+
       const links = element.querySelectorAll('a');
       const rect = element.getBoundingClientRect();
-      
+
       links.forEach(link => {
         const linkRect = link.getBoundingClientRect();
         const x = ((linkRect.left - rect.left) / rect.width) * pdfWidth;
@@ -102,8 +102,6 @@ const MainApp = () => {
     } catch (error) {
       console.error('PDF Generation failed:', error);
       alert('Failed to generate PDF. Please try again.');
-    } finally {
-      // PDF generation complete
     }
   };
 
@@ -116,7 +114,7 @@ const MainApp = () => {
         </header>
 
         <div className="templates-grid">
-          <motion.div 
+          <motion.div
             whileHover={{ y: -10 }}
             className={`template-card ${selectedTemplate === 'JakeRyan' ? 'selected' : ''}`}
             onClick={() => {
@@ -130,7 +128,7 @@ const MainApp = () => {
                 <JakeRyanTemplate data={jakeRyanData} />
               </div>
               <div className="card-actions">
-                <button 
+                <button
                   className="card-action-btn"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -150,7 +148,7 @@ const MainApp = () => {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             whileHover={{ y: -10 }}
             className={`template-card ${selectedTemplate === 'Harishbar' ? 'selected' : ''}`}
             onClick={() => {
@@ -164,7 +162,7 @@ const MainApp = () => {
                 <HarishbarTemplate data={harishbarData} />
               </div>
               <div className="card-actions">
-                <button 
+                <button
                   className="card-action-btn"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -184,7 +182,7 @@ const MainApp = () => {
             </div>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             whileHover={{ y: -10 }}
             className={`template-card ${selectedTemplate === 'AutoCV' ? 'selected' : ''}`}
             onClick={() => {
@@ -198,7 +196,7 @@ const MainApp = () => {
                 <AutoCVTemplate data={autoCVData} />
               </div>
               <div className="card-actions">
-                <button 
+                <button
                   className="card-action-btn"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -219,7 +217,7 @@ const MainApp = () => {
           </motion.div>
 
           {/* Template 4: Jaydev Varma */}
-          <motion.div 
+          <motion.div
             whileHover={{ y: -10 }}
             className={`template-card ${selectedTemplate === 'JaydevVarma' ? 'selected' : ''}`}
             onClick={() => {
@@ -233,7 +231,7 @@ const MainApp = () => {
                 <JaydevVarmaTemplate data={jaydevVarmaData} />
               </div>
               <div className="card-actions">
-                <button 
+                <button
                   className="card-action-btn"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -253,7 +251,7 @@ const MainApp = () => {
           </motion.div>
 
           {/* Template 5: Two Column */}
-          <motion.div 
+          <motion.div
             whileHover={{ y: -10 }}
             className={`template-card ${selectedTemplate === 'TwoColumn' ? 'selected' : ''}`}
             onClick={() => {
@@ -267,7 +265,7 @@ const MainApp = () => {
                 <TwoColumnTemplate data={twoColumnData} />
               </div>
               <div className="card-actions">
-                <button 
+                <button
                   className="card-action-btn"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -285,11 +283,44 @@ const MainApp = () => {
               <p>Elegant Two-Column Layout</p>
             </div>
           </motion.div>
+          {/* Template 6: Rezume */}
+          <motion.div
+            whileHover={{ y: -10 }}
+            className={`template-card ${selectedTemplate === 'Rezume' ? 'selected' : ''}`}
+            onClick={() => {
+              setSelectedTemplate('Rezume');
+              loadSampleData('Rezume');
+              setView('editor');
+            }}
+          >
+            <div className="template-preview-thumb">
+              <div className="mini-template-view">
+                <RezumeTemplate data={jakeRyanData} />
+              </div>
+              <div className="card-actions">
+                <button
+                  className="card-action-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsPreviewOpen(true);
+                    setSelectedTemplate('Rezume');
+                  }}
+                  title="Quick View"
+                >
+                  <Eye size={18} />
+                </button>
+              </div>
+            </div>
+            <div className="template-info">
+              <h3>Resume Template 6</h3>
+              <p>Professional Overleaf-Style Design</p>
+            </div>
+          </motion.div>
         </div>
 
-        <PreviewModal 
-          isOpen={isPreviewOpen} 
-          onClose={() => setIsPreviewOpen(false)} 
+        <PreviewModal
+          isOpen={isPreviewOpen}
+          onClose={() => setIsPreviewOpen(false)}
           template={selectedTemplate}
           data={resumeData}
         />
@@ -303,14 +334,14 @@ const MainApp = () => {
       <AnimatePresence>
         {isMenuOpen && (
           <>
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="mobile-menu-backdrop"
               onClick={() => setIsMenuOpen(false)}
             />
-            <motion.div 
+            <motion.div
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
@@ -320,9 +351,9 @@ const MainApp = () => {
               <div className="menu-header">
                 <h1 className="logo-text">Resume<span>Builder</span></h1>
               </div>
-              
+
               <div className="menu-links">
-                <button 
+                <button
                   className={`menu-link ${mobileTab === 'edit' ? 'active' : ''}`}
                   onClick={() => { setMobileTab('edit'); setIsMenuOpen(false); }}
                 >
@@ -330,26 +361,26 @@ const MainApp = () => {
                   <span>Edit Resume</span>
                   <ChevronRight size={18} className="chevron" />
                 </button>
-                
-                <button 
+
+                <button
                   className={`menu-link ${mobileTab === 'preview' ? 'active' : ''}`}
-                  onClick={() => { 
-                    setMobileTab('preview'); 
+                  onClick={() => {
+                    setMobileTab('preview');
                     setPreviewTab('preview');
-                    setIsMenuOpen(false); 
+                    setIsMenuOpen(false);
                   }}
                 >
                   <div className="link-icon"><Eye size={20} /></div>
                   <span>Preview Resume</span>
                   <ChevronRight size={18} className="chevron" />
                 </button>
-                
-                <button 
+
+                <button
                   className={`menu-link ${mobileTab === 'structure' ? 'active' : ''}`}
-                  onClick={() => { 
-                    setMobileTab('structure'); 
+                  onClick={() => {
+                    setMobileTab('structure');
                     setPreviewTab('structure');
-                    setIsMenuOpen(false); 
+                    setIsMenuOpen(false);
                   }}
                 >
                   <div className="link-icon"><Layout size={20} /></div>
@@ -357,7 +388,7 @@ const MainApp = () => {
                   <ChevronRight size={18} className="chevron" />
                 </button>
 
-                <button 
+                <button
                   className="menu-link"
                   onClick={() => { loadSampleData(selectedTemplate); setIsMenuOpen(false); }}
                 >
@@ -365,16 +396,8 @@ const MainApp = () => {
                   <span>View Sample Data</span>
                   <ChevronRight size={18} className="chevron" />
                 </button>
-                
-                <button 
-                  className="menu-link download-mobile"
-                  onClick={() => { handleDownload(); setIsMenuOpen(false); }}
-                >
-                  <div className="link-icon"><Download size={20} /></div>
-                  <span>Download PDF</span>
-                  <ChevronRight size={18} className="chevron" />
-                </button>
-              </div>
+
+                              </div>
             </motion.div>
           </>
         )}
@@ -385,20 +408,21 @@ const MainApp = () => {
           <button className="mobile-menu-btn mobile-only" onClick={() => setIsMenuOpen(true)}>
             <Menu size={24} />
           </button>
-          
+
           <button className="back-btn desktop-only" onClick={() => setView('selector')}>
             <ChevronLeft size={18} /> Back
           </button>
           <div className="v-divider desktop-only"></div>
           <span className="current-template desktop-only">
-             {selectedTemplate === 'JakeRyan' ? 'Resume Template 1' : 
-              selectedTemplate === 'Harishbar' ? 'Resume Template 2' : 
-              selectedTemplate === 'AutoCV' ? 'Resume Template 3' : 
-              selectedTemplate === 'JaydevVarma' ? 'Resume Template 4' : 'Resume Template 5'}
+            {selectedTemplate === 'JakeRyan' ? 'Resume Template 1' :
+              selectedTemplate === 'Harishbar' ? 'Resume Template 2' :
+                selectedTemplate === 'AutoCV' ? 'Resume Template 3' :
+                  selectedTemplate === 'JaydevVarma' ? 'Resume Template 4' : 
+                    selectedTemplate === 'TwoColumn' ? 'Resume Template 5' : 'Resume Template 6'}
           </span>
           <span className="mobile-view-title mobile-only">
-            {mobileTab === 'edit' ? 'Edit Resume' : 
-             mobileTab === 'preview' ? 'Preview' : 'Structure'}
+            {mobileTab === 'edit' ? 'Edit Resume' :
+              mobileTab === 'preview' ? 'Preview' : 'Structure'}
           </span>
         </div>
         <div className="nav-right desktop-only">
@@ -407,6 +431,11 @@ const MainApp = () => {
           </button>
           <button className="download-btn" onClick={handleDownload}>
             Download PDF <Download size={18} />
+          </button>
+        </div>
+        <div className="nav-right mobile-only">
+          <button className="mobile-download-btn" onClick={handleDownload}>
+            <Download size={20} />
           </button>
         </div>
       </nav>
@@ -418,13 +447,13 @@ const MainApp = () => {
         <div className={`preview-area ${mobileTab === 'edit' ? 'mobile-hidden' : ''}`}>
           <div className="preview-controls">
             <div className="control-pills">
-              <button 
+              <button
                 className={`pill ${previewTab === 'preview' ? 'active' : ''}`}
                 onClick={() => setPreviewTab('preview')}
               >
                 <Eye size={16} /> Preview
               </button>
-              <button 
+              <button
                 className={`pill ${previewTab === 'structure' ? 'active' : ''}`}
                 onClick={() => setPreviewTab('structure')}
               >
@@ -432,7 +461,7 @@ const MainApp = () => {
               </button>
             </div>
           </div>
-          
+
           <div className="preview-scroll">
             {previewTab === 'preview' ? (
               <div className="preview-scale" ref={resumeRef}>
@@ -441,6 +470,7 @@ const MainApp = () => {
                 {selectedTemplate === 'AutoCV' && <AutoCVTemplate data={resumeData} />}
                 {selectedTemplate === 'JaydevVarma' && <JaydevVarmaTemplate data={resumeData} />}
                 {selectedTemplate === 'TwoColumn' && <TwoColumnTemplate data={resumeData} />}
+                {selectedTemplate === 'Rezume' && <RezumeTemplate data={resumeData} />}
               </div>
             ) : (
               <div className="structure-editor">
@@ -451,8 +481,8 @@ const MainApp = () => {
                     <>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.education || ''}
                           placeholder="Education"
                           onChange={(e) => updateSectionTitles({ education: e.target.value })}
@@ -460,8 +490,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.experience || ''}
                           placeholder="Experience"
                           onChange={(e) => updateSectionTitles({ experience: e.target.value })}
@@ -469,8 +499,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.projects || ''}
                           placeholder="Projects"
                           onChange={(e) => updateSectionTitles({ projects: e.target.value })}
@@ -478,8 +508,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.skills || ''}
                           placeholder="Technical Skills"
                           onChange={(e) => updateSectionTitles({ skills: e.target.value })}
@@ -490,8 +520,8 @@ const MainApp = () => {
                     <>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.experience || ''}
                           placeholder="EXPERIENCE"
                           onChange={(e) => updateSectionTitles({ experience: e.target.value })}
@@ -499,8 +529,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.projects || ''}
                           placeholder="PROJECTS"
                           onChange={(e) => updateSectionTitles({ projects: e.target.value })}
@@ -508,8 +538,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.education || ''}
                           placeholder="EDUCATION"
                           onChange={(e) => updateSectionTitles({ education: e.target.value })}
@@ -517,8 +547,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.skills || ''}
                           placeholder="SKILLS"
                           onChange={(e) => updateSectionTitles({ skills: e.target.value })}
@@ -529,8 +559,8 @@ const MainApp = () => {
                     <>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.summary || ''}
                           placeholder="Career Objective"
                           onChange={(e) => updateSectionTitles({ summary: e.target.value })}
@@ -538,8 +568,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.experience || ''}
                           placeholder="Work Experience"
                           onChange={(e) => updateSectionTitles({ experience: e.target.value })}
@@ -547,8 +577,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.projects || ''}
                           placeholder="Projects"
                           onChange={(e) => updateSectionTitles({ projects: e.target.value })}
@@ -556,8 +586,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.education || ''}
                           placeholder="Education"
                           onChange={(e) => updateSectionTitles({ education: e.target.value })}
@@ -565,8 +595,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.skills || ''}
                           placeholder="Technical Skills"
                           onChange={(e) => updateSectionTitles({ skills: e.target.value })}
@@ -574,8 +604,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.strengths || ''}
                           placeholder="Strengths"
                           onChange={(e) => updateSectionTitles({ strengths: e.target.value })}
@@ -586,8 +616,8 @@ const MainApp = () => {
                     <>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.summary || ''}
                           placeholder="Summary"
                           onChange={(e) => updateSectionTitles({ summary: e.target.value })}
@@ -595,8 +625,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.education || ''}
                           placeholder="Education"
                           onChange={(e) => updateSectionTitles({ education: e.target.value })}
@@ -604,8 +634,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.experience || ''}
                           placeholder="Experience"
                           onChange={(e) => updateSectionTitles({ experience: e.target.value })}
@@ -613,8 +643,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.projects || ''}
                           placeholder="Projects"
                           onChange={(e) => updateSectionTitles({ projects: e.target.value })}
@@ -622,8 +652,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.skills || ''}
                           placeholder="Skills"
                           onChange={(e) => updateSectionTitles({ skills: e.target.value })}
@@ -634,8 +664,8 @@ const MainApp = () => {
                     <>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.experience || ''}
                           placeholder="WORK EXPERIENCE"
                           onChange={(e) => updateSectionTitles({ experience: e.target.value })}
@@ -643,8 +673,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.education || ''}
                           placeholder="EDUCATION"
                           onChange={(e) => updateSectionTitles({ education: e.target.value })}
@@ -652,8 +682,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.projects || ''}
                           placeholder="PROJECTS"
                           onChange={(e) => updateSectionTitles({ projects: e.target.value })}
@@ -661,8 +691,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.communication || ''}
                           placeholder="COMMUNICATION SKILLS"
                           onChange={(e) => updateSectionTitles({ communication: e.target.value })}
@@ -670,8 +700,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.achievements || ''}
                           placeholder="ACHIEVEMENTS"
                           onChange={(e) => updateSectionTitles({ achievements: e.target.value })}
@@ -679,8 +709,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.skills || ''}
                           placeholder="TECHNICAL SKILLS"
                           onChange={(e) => updateSectionTitles({ skills: e.target.value })}
@@ -688,8 +718,65 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
+                          value={resumeData.sectionTitles?.certifications || ''}
+                          placeholder="CERTIFICATIONS"
+                          onChange={(e) => updateSectionTitles({ certifications: e.target.value })}
+                        />
+                      </div>
+                    </>
+                  ) : selectedTemplate === 'Rezume' ? (
+                    <>
+                      <div className="input-group">
+                        <label>Section</label>
+                        <input
+                          type="text"
+                          value={resumeData.sectionTitles?.summary || ''}
+                          placeholder="Career Objective"
+                          onChange={(e) => updateSectionTitles({ summary: e.target.value })}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Section</label>
+                        <input
+                          type="text"
+                          value={resumeData.sectionTitles?.skills || ''}
+                          placeholder="TECHNICAL SKILLS"
+                          onChange={(e) => updateSectionTitles({ skills: e.target.value })}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Section</label>
+                        <input
+                          type="text"
+                          value={resumeData.sectionTitles?.experience || ''}
+                          placeholder="EXPERIENCE"
+                          onChange={(e) => updateSectionTitles({ experience: e.target.value })}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Section</label>
+                        <input
+                          type="text"
+                          value={resumeData.sectionTitles?.education || ''}
+                          placeholder="EDUCATION"
+                          onChange={(e) => updateSectionTitles({ education: e.target.value })}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Section</label>
+                        <input
+                          type="text"
+                          value={resumeData.sectionTitles?.projects || ''}
+                          placeholder="PROJECTS"
+                          onChange={(e) => updateSectionTitles({ projects: e.target.value })}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>Section</label>
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.certifications || ''}
                           placeholder="CERTIFICATIONS"
                           onChange={(e) => updateSectionTitles({ certifications: e.target.value })}
@@ -700,8 +787,8 @@ const MainApp = () => {
                     <>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.experience || ''}
                           placeholder="Experience"
                           onChange={(e) => updateSectionTitles({ experience: e.target.value })}
@@ -709,8 +796,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.projects || ''}
                           placeholder="Projects"
                           onChange={(e) => updateSectionTitles({ projects: e.target.value })}
@@ -718,8 +805,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.education || ''}
                           placeholder="Education"
                           onChange={(e) => updateSectionTitles({ education: e.target.value })}
@@ -727,8 +814,8 @@ const MainApp = () => {
                       </div>
                       <div className="input-group">
                         <label>Section</label>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           value={resumeData.sectionTitles?.skills || ''}
                           placeholder="Skills"
                           onChange={(e) => updateSectionTitles({ skills: e.target.value })}

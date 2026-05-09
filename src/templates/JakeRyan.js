@@ -130,6 +130,7 @@ const JakeRyanTemplate = ({ data }) => {
         .resume-container {
           width: 210mm;
           min-height: 297mm;
+          height: auto;
           padding: 12mm 15mm;
           background: white;
           color: black;

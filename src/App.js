@@ -43,39 +43,36 @@ const MainApp = () => {
   const [previewTab, setPreviewTab] = useState('preview'); // 'preview' or 'structure'
   const [mobileTab, setMobileTab] = useState('edit'); // 'edit', 'preview', 'structure'
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadStatus, setDownloadStatus] = useState('idle'); // 'idle', 'generating', 'success', 'error'
   const resumeRef = useRef();
 
   const handleDownload = async () => {
-    const element = document.getElementById('resume-pdf-source');
+    const element = document.getElementById('resume-template');
     if (!element) {
-      alert('Application error: PDF source not found.');
+      setDownloadStatus('error');
+      setTimeout(() => setDownloadStatus('idle'), 3000);
       return;
     }
 
+    setDownloadStatus('generating');
+
     try {
-      setIsDownloading(true);
       const canvas = await html2canvas(element, {
-        scale: 4, // Scale 4 is usually enough and more stable
+        scale: 6,
         useCORS: true,
         logging: false,
         allowTaint: true,
         backgroundColor: '#ffffff',
-        width: 794, // 210mm at 96dpi
-        height: 1123, // 297mm at 96dpi
-        windowWidth: 794,
         onclone: (clonedDoc) => {
-          const clonedElement = clonedDoc.getElementById('resume-pdf-source')?.firstElementChild;
+          const clonedElement = clonedDoc.getElementById('resume-template');
           if (clonedElement) {
             clonedElement.style.transform = 'none';
-            clonedElement.style.width = '210mm';
-            clonedElement.style.minHeight = '297mm';
+            clonedElement.style.width = '8.5in';
+            clonedElement.style.minHeight = '11in';
             clonedElement.style.margin = '0';
-            clonedElement.style.padding = '0';
+            clonedElement.style.padding = '0.5';
             clonedElement.style.boxSizing = 'border-box';
             clonedElement.style.backgroundColor = 'white';
-            clonedElement.style.display = 'block';
-            clonedElement.style.visibility = 'visible';
 
             const parent = clonedElement.parentElement;
             if (parent) {
@@ -108,33 +105,18 @@ const MainApp = () => {
       });
 
       pdf.save(`${resumeData.personalInfo.fullName.replace(/\s+/g, '_')}_Resume.pdf`);
-      setIsDownloading(false);
-      alert('Resume downloaded successfully!');
+      setDownloadStatus('success');
+      setTimeout(() => setDownloadStatus('idle'), 4000);
     } catch (error) {
-      setIsDownloading(false);
       console.error('PDF Generation failed:', error);
-      alert('Failed to generate PDF. Please try again.');
+      setDownloadStatus('error');
+      setTimeout(() => setDownloadStatus('idle'), 4000);
     }
   };
 
   if (view === 'selector') {
     return (
       <div className="selector-screen">
-        <AnimatePresence>
-          {isDownloading && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="download-overlay"
-            >
-              <div className="download-spinner-wrap">
-                <div className="spinner"></div>
-                <p>Generating PDF...</p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
         <header className="selector-header">
           <h1 className="logo-text">Resume<span>Builder</span></h1>
           <p>Select a professional template to get started</p>
@@ -392,21 +374,6 @@ const MainApp = () => {
 
   return (
     <div className="editor-screen">
-      <AnimatePresence>
-        {isDownloading && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="download-overlay"
-          >
-            <div className="download-spinner-wrap">
-              <div className="spinner"></div>
-              <p>Generating PDF...</p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMenuOpen && (
@@ -477,6 +444,38 @@ const MainApp = () => {
                               </div>
             </motion.div>
           </>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {downloadStatus !== 'idle' && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className={`download-toast ${downloadStatus}`}
+          >
+            <div className="toast-content">
+              {downloadStatus === 'generating' && (
+                <>
+                  <div className="spinner"></div>
+                  <span>Generating...</span>
+                </>
+              )}
+              {downloadStatus === 'success' && (
+                <>
+                  <div className="status-icon success">✓</div>
+                  <span>Resume downloaded successfully!</span>
+                </>
+              )}
+              {downloadStatus === 'error' && (
+                <>
+                  <div className="status-icon error">!</div>
+                  <span>Generation failed. Please try again.</span>
+                </>
+              )}
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -983,19 +982,6 @@ const MainApp = () => {
           </div>
         </div>
       </main>
-      
-      {/* Hidden container for PDF generation - always in DOM */}
-      <div id="pdf-gen-container" style={{ position: 'absolute', left: '-9999px', top: '0', zIndex: -1, width: '210mm' }}>
-        <div id="resume-pdf-source" style={{ width: '210mm' }}>
-          {selectedTemplate === 'JakeRyan' && <JakeRyanTemplate data={resumeData} />}
-          {selectedTemplate === 'Harishbar' && <HarishbarTemplate data={resumeData} />}
-          {selectedTemplate === 'AutoCV' && <AutoCVTemplate data={resumeData} />}
-          {selectedTemplate === 'JaydevVarma' && <JaydevVarmaTemplate data={resumeData} />}
-          {selectedTemplate === 'TwoColumn' && <TwoColumnTemplate data={resumeData} />}
-          {selectedTemplate === 'Rezume' && <RezumeTemplate data={resumeData} />}
-          {selectedTemplate === 'NamanCV' && <NamanCVTemplate data={resumeData} />}
-        </div>
-      </div>
     </div>
   );
 };

@@ -472,7 +472,7 @@ const MainApp = () => {
                   onClick={() => { loadSampleData(selectedTemplate); setIsMenuOpen(false); }}
                 >
                   <div className="link-icon"><Eye size={20} /></div>
-                  <span>View Sample Data</span>
+                  <span>Load Sample Data</span>
                   <ChevronRight size={18} className="chevron" />
                 </button>
 
@@ -540,7 +540,7 @@ const MainApp = () => {
         </div>
         <div className="nav-right desktop-only">
           <button className="sample-btn-nav" onClick={() => loadSampleData(selectedTemplate)}>
-            <Eye size={18} /> View Sample
+            <Eye size={18} /> Load Sample Data
           </button>
           <button className="download-btn" onClick={handleDownload}>
             Download PDF <Download size={18} />

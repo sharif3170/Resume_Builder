@@ -50,7 +50,13 @@ const Template8 = ({ data }) => {
               )}
               {personalInfo.phone && (
                 <>
-                  {personalInfo.email && <span className="pipe">|</span>}
+                 <a
+  href={`tel:${personalInfo.phone.replace(/[^0-9+]/g, '')}`}
+  className="contact-btn"
+>
+  <Phone size={14} />
+  <span>{personalInfo.phone}</span>
+</a>
                   <div className="social-link">
                     <Phone size={14} />
                     <a href={`tel:${personalInfo.phone}`}>{personalInfo.phone}</a>

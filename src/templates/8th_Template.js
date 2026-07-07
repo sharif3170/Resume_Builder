@@ -53,7 +53,7 @@ const Template8 = ({ data }) => {
                   {personalInfo.email && <span className="pipe">|</span>}
                   <div className="social-link">
                     <Phone size={14} />
-                    <span>{personalInfo.phone}</span>
+                    <a href={`tel:${personalInfo.phone}`}>{personalInfo.phone}</a>
                   </div>
                 </>
               )}
